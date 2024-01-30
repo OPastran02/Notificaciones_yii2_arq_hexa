@@ -30,6 +30,7 @@ services:
       - MYSQL_PASSWORD=secret
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - "3307" 
     networks:
@@ -37,6 +38,6 @@ services:
 
 networks:
   notificaciones-net:
-  
+
 volumes:
   mysql_data:
