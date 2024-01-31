@@ -111,6 +111,42 @@ ALTER TABLE `laboratorio_determinacion_legislacion`
   ADD CONSTRAINT `FK_C7F6548EA9276E6C` FOREIGN KEY (`tipo_id`) REFERENCES `laboratorio_tipo_determinacion_legislacion` (`id`),
   ADD CONSTRAINT `FK_C7F6548EAA7041B7` FOREIGN KEY (`determinacion_id`) REFERENCES `laboratorio_determinacion` (`id`);
 
+-- Creación de índices en la tabla 'laboratorio_historial_carga_resultados'
+ALTER TABLE `laboratorio_historial_carga_resultados`
+  ADD KEY `IDX_650FDF83DC9099C4` (`id_resultado_id`),
+  ADD KEY `IDX_650FDF83AA7041B7` (`determinacion_id`),
+  ADD KEY `IDX_650FDF83644ABBDE` (`legislacion_id`),
+  ADD KEY `IDX_650FDF839B5F2C0B` (`legislacion_sin_contacto_id`),
+  ADD KEY `IDX_650FDF8386B5E41E` (`legislacion_pasivo_id`),
+  ADD KEY `IDX_650FDF83DB38439E` (`usuario_id`);
+
+-- Creación de restricciones en la tabla 'laboratorio_historial_carga_resultados'
+ALTER TABLE `laboratorio_historial_carga_resultados`
+  ADD CONSTRAINT `FK_650FDF83644ABBDE` FOREIGN KEY (`legislacion_id`) REFERENCES `laboratorio_legislacion` (`id`),
+  ADD CONSTRAINT `FK_650FDF8386B5E41E` FOREIGN KEY (`legislacion_pasivo_id`) REFERENCES `laboratorio_legislacion` (`id`),
+  ADD CONSTRAINT `FK_650FDF839B5F2C0B` FOREIGN KEY (`legislacion_sin_contacto_id`) REFERENCES `laboratorio_legislacion` (`id`),
+  ADD CONSTRAINT `FK_650FDF83AA7041B7` FOREIGN KEY (`determinacion_id`) REFERENCES `laboratorio_determinacion` (`id`),
+  ADD CONSTRAINT `FK_650FDF83DB38439E` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `FK_650FDF83DC9099C4` FOREIGN KEY (`id_resultado_id`) REFERENCES `laboratorio_carga_resultados` (`id`);
+
+  -- Creación de referencias para la tabla 'laboratorio_muestra'
+ALTER TABLE `laboratorio_muestra`
+  ADD CONSTRAINT `FK_BFD757414854653A` FOREIGN KEY (`pedido_id`) REFERENCES `laboratorio_pedido` (`id`),
+  ADD CONSTRAINT `FK_BFD7574133790B12` FOREIGN KEY (`usuario_supervisador_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `FK_BFD7574120533D01` FOREIGN KEY (`usuario_autorizador_id`) REFERENCES `usuarios` (`id`);
+
+-- Creación de referencias para la tabla 'laboratorio_pedido'
+ALTER TABLE `laboratorio_pedido`
+  ADD CONSTRAINT `FK_573D9EF871B61351` FOREIGN KEY (`establecimiento_id`) REFERENCES `establecimiento` (`id`),
+  ADD CONSTRAINT `FK_573D9EF8922C27` FOREIGN KEY (`usuario_eliminador_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `FK_573D9EF8961E0D4C` FOREIGN KEY (`estado_pedido_id`) REFERENCES `laboratorio_estado_pedido` (`id`),
+  ADD CONSTRAINT `FK_573D9EF8AA3ADA74` FOREIGN KEY (`tipo_pedido_id`) REFERENCES `laboratorio_tipo_pedido` (`id`),
+  ADD CONSTRAINT `FK_573D9EF8BDD13D7A` FOREIGN KEY (`prioridad_id`) REFERENCES `laboratorio_prioridad` (`id`),
+  ADD CONSTRAINT `FK_573D9EF8CD589383` FOREIGN KEY (`usuario_anulador_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `FK_573D9EF8F4EAFA4C` FOREIGN KEY (`usuario_autorizado_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `FK_573D9EF8FD8A7328` FOREIGN KEY (`programa_id`) REFERENCES `laboratorio_programa` (`id`);
+
+
 */
 --
 -- Dumping events for database 'notificaciones'
