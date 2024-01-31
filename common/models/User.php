@@ -12,16 +12,40 @@ use yii\web\IdentityInterface;
  * User model
  *
  * @property integer $id
- * @property string $username
- * @property string $password_hash
- * @property string $password_reset_token
- * @property string $verification_token
- * @property string $email
- * @property string $auth_key
+ * @property string  $username
+ * @property string  $password write-only password 
+ * @property string  $nombre
+ * @property string  $apellido
+ * @property integer $sistemaNotificaciones
+ * @property integer $idArea
+ * @property integer $pedidos
+ * @property integer $establecimientos
+ * @property integer $inbox
+ * @property integer $antecedentes
+ * @property integer $programacion
+ * @property integer $documentacion
+ * @property integer $actasYFajas
+ * @property integer $cargaMasivaCedulas
+ * @property string  $ipUsuario
+ * @property integer $nivelTablet
+ * @property integer $nivelPatrulla
+ * @property integer $rni
+ * @property integer $habilitado
+ * @property date    $ultimaConexion
+ * @property date    $Fecha_Creado
+ * @property integer $Id_Usuario_Creador
+ * @property date    $Fecha_Modificado
+ * @property integer $Id_Usuario_Modificador
+ * @property integer $laboratorio
+ * @property string  $password_hash
+ * @property string  $password_reset_token
+ * @property string  $verification_token
+ * @property string  $email
+ * @property string  $auth_key
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
- * @property string $password write-only password
+
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -35,7 +59,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return '{{%usuarios}}';
     }
 
     /**
