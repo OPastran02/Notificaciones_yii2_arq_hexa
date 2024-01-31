@@ -30,6 +30,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `laboratorio_carga_resultados`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `laboratorio_carga_resultados` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `determinacion_id` int(11) DEFAULT NULL,
@@ -42,19 +43,7 @@ CREATE TABLE `laboratorio_carga_resultados` (
   `resultado` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `Fecha_Inicio_Analisis` date DEFAULT NULL,
   `Fecha_Fin_Analisis` date DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `IDX_67BED1A0AA7041B7` (`determinacion_id`),
-  KEY `IDX_67BED1A031177579` (`muestra_id`),
-  KEY `IDX_67BED1A0644ABBDE` (`legislacion_id`),
-  KEY `IDX_67BED1A09B5F2C0B` (`legislacion_sin_contacto_id`),
-  KEY `IDX_67BED1A086B5E41E` (`legislacion_pasivo_id`),
-  KEY `IDX_67BED1A0DB38439E` (`usuario_id`),
-  CONSTRAINT `FK_67BED1A031177579` FOREIGN KEY (`muestra_id`) REFERENCES `laboratorio_muestra` (`id`),
-  CONSTRAINT `FK_67BED1A0644ABBDE` FOREIGN KEY (`legislacion_id`) REFERENCES `laboratorio_legislacion` (`id`),
-  CONSTRAINT `FK_67BED1A086B5E41E` FOREIGN KEY (`legislacion_pasivo_id`) REFERENCES `laboratorio_legislacion` (`id`),
-  CONSTRAINT `FK_67BED1A09B5F2C0B` FOREIGN KEY (`legislacion_sin_contacto_id`) REFERENCES `laboratorio_legislacion` (`id`),
-  CONSTRAINT `FK_67BED1A0AA7041B7` FOREIGN KEY (`determinacion_id`) REFERENCES `laboratorio_determinacion` (`id`),
-  CONSTRAINT `FK_67BED1A0DB38439E` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11411 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -107,6 +96,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `laboratorio_determinacion_legislacion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `laboratorio_determinacion_legislacion` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `determinacion_id` int(11) DEFAULT NULL,
@@ -117,15 +107,10 @@ CREATE TABLE `laboratorio_determinacion_legislacion` (
   `max` double DEFAULT NULL,
   `maxIgual` tinyint(1) DEFAULT NULL,
   `MostrarComo` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `IDX_C7F6548EAA7041B7` (`determinacion_id`),
-  KEY `IDX_C7F6548E644ABBDE` (`legislacion_id`),
-  KEY `IDX_C7F6548EA9276E6C` (`tipo_id`),
-  CONSTRAINT `FK_C7F6548E644ABBDE` FOREIGN KEY (`legislacion_id`) REFERENCES `laboratorio_legislacion` (`id`),
-  CONSTRAINT `FK_C7F6548EA9276E6C` FOREIGN KEY (`tipo_id`) REFERENCES `laboratorio_tipo_determinacion_legislacion` (`id`),
-  CONSTRAINT `FK_C7F6548EAA7041B7` FOREIGN KEY (`determinacion_id`) REFERENCES `laboratorio_determinacion` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Dumping data for table `laboratorio_determinacion_legislacion`

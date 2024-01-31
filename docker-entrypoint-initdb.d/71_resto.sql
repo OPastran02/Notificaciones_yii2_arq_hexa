@@ -1,4 +1,4 @@
-
+/*
 ALTER TABLE `inspeccion`
 ADD CONSTRAINT `FK_343F5BA3FEA2F1E6`
 FOREIGN KEY (`orden_inspeccion_id`)
@@ -85,6 +85,33 @@ ADD CONSTRAINT `FK_7109E1749C833003`
 FOREIGN KEY (`grupo_id`)
 REFERENCES `encuesta_grupo_preguntas` (`id`);
 
+ALTER TABLE `laboratorio_carga_resultados`
+  ADD KEY `IDX_67BED1A0AA7041B7` (`determinacion_id`),
+  ADD KEY `IDX_67BED1A031177579` (`muestra_id`),
+  ADD KEY `IDX_67BED1A0644ABBDE` (`legislacion_id`),
+  ADD KEY `IDX_67BED1A09B5F2C0B` (`legislacion_sin_contacto_id`),
+  ADD KEY `IDX_67BED1A086B5E41E` (`legislacion_pasivo_id`),
+  ADD KEY `IDX_67BED1A0DB38439E` (`usuario_id`);
+
+ALTER TABLE `laboratorio_carga_resultados`
+  ADD CONSTRAINT `FK_67BED1A031177579` FOREIGN KEY (`muestra_id`) REFERENCES `laboratorio_muestra` (`id`),
+  ADD CONSTRAINT `FK_67BED1A0644ABBDE` FOREIGN KEY (`legislacion_id`) REFERENCES `laboratorio_legislacion` (`id`),
+  ADD CONSTRAINT `FK_67BED1A086B5E41E` FOREIGN KEY (`legislacion_pasivo_id`) REFERENCES `laboratorio_legislacion` (`id`),
+  ADD CONSTRAINT `FK_67BED1A09B5F2C0B` FOREIGN KEY (`legislacion_sin_contacto_id`) REFERENCES `laboratorio_legislacion` (`id`),
+  ADD CONSTRAINT `FK_67BED1A0AA7041B7` FOREIGN KEY (`determinacion_id`) REFERENCES `laboratorio_determinacion` (`id`),
+  ADD CONSTRAINT `FK_67BED1A0DB38439E` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+
+ALTER TABLE `laboratorio_determinacion_legislacion`
+  ADD KEY `IDX_C7F6548EAA7041B7` (`determinacion_id`),
+  ADD KEY `IDX_C7F6548E644ABBDE` (`legislacion_id`),
+  ADD KEY `IDX_C7F6548EA9276E6C` (`tipo_id`);
+
+ALTER TABLE `laboratorio_determinacion_legislacion`
+  ADD CONSTRAINT `FK_C7F6548E644ABBDE` FOREIGN KEY (`legislacion_id`) REFERENCES `laboratorio_legislacion` (`id`),
+  ADD CONSTRAINT `FK_C7F6548EA9276E6C` FOREIGN KEY (`tipo_id`) REFERENCES `laboratorio_tipo_determinacion_legislacion` (`id`),
+  ADD CONSTRAINT `FK_C7F6548EAA7041B7` FOREIGN KEY (`determinacion_id`) REFERENCES `laboratorio_determinacion` (`id`);
+
+*/
 --
 -- Dumping events for database 'notificaciones'
 --
@@ -1126,261 +1153,3 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-
---
--- Final view structure for view `Tabla_Establecimientos`
---
-
-/*!50001 DROP TABLE IF EXISTS `Tabla_Establecimientos`*/;
-/*!50001 DROP VIEW IF EXISTS `Tabla_Establecimientos`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `Tabla_Establecimientos` AS select `e`.`id` AS `id`,`es`.`Estado` AS `Estado`,`rp`.`RubroPrincipal` AS `RubroPrincipal`,`d`.`comuna` AS `Comunas`,`a`.`Actuaciones` AS `Actuaciones`,concat(coalesce(`rz`.`nombre1`,''),' ',coalesce(`rz`.`nombre2`,'')) AS `RazonSocial`,`rz`.`cuit` AS `cuit`,`d`.`longitud` AS `longitud`,`d`.`latitud` AS `latitud`,`d`.`cmr` AS `cmr` from ((((((((`establecimiento` `e` join `vista_all_direcciones` `d` on((`e`.`id` = `d`.`Id_Establecimiento`))) left join `estado` `es` on((`es`.`id` = `e`.`Id_Estado`))) left join `resultados_ultima_inspeccion` `rut` on((`rut`.`establecimiento_id` = `e`.`id`))) left join `rubro_principal` `rp` on((`e`.`Id_Rubro_Principal` = `rp`.`id`))) left join `establecimientos_razonessociales` `er` on(((`e`.`id` = `er`.`establecimiento_id`) and (`er`.`fecha_inicio` = (select max(`establecimientos_razonessociales`.`fecha_inicio`) from `establecimientos_razonessociales` where (`establecimientos_razonessociales`.`establecimiento_id` = `e`.`id`)))))) left join `razon_social` `rz` on((`rz`.`id` = `er`.`razon_social_id`))) left join `view_rubros` `ru` on((`ru`.`establecimiento_id` = `e`.`id`))) left join `view_actuaciones` `a` on((`a`.`Id_Establecimiento` = `e`.`id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `Tabla_Faltas`
---
-
-/*!50001 DROP TABLE IF EXISTS `Tabla_Faltas`*/;
-/*!50001 DROP VIEW IF EXISTS `Tabla_Faltas`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`lucho`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `Tabla_Faltas` AS select `au`.`checklist` AS `checklist`,`au`.`fechaRecepcion` AS `fechaRecepcion`,`am`.`motivo` AS `Falta`,`am`.`motivoCompleto` AS `Falta_motivo_completo`,`am`.`tipo` AS `Falta_tipo` from ((`acta_utilizada` `au` join `acta_utilizada_motivo` `aum` on((`au`.`id` = `aum`.`id_acta_utilizada`))) join `acta_motivo` `am` on((`aum`.`id_acta_motivo` = `am`.`id`))) where ((`au`.`checklist` <> 0) or (not(NULL))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `Tabla_Inspecciones`
---
-
-/*!50001 DROP TABLE IF EXISTS `Tabla_Inspecciones`*/;
-/*!50001 DROP VIEW IF EXISTS `Tabla_Inspecciones`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `Tabla_Inspecciones` AS select `o`.`id` AS `id`,`o`.`checklist` AS `checklist`,`i`.`fecha_inspeccion` AS `fecha_inspeccion`,`o`.`establecimiento_id` AS `establecimiento_id`,`o`.`anulada` AS `anulada` from ((((((`orden_inspeccion` `o` join `area` `a` on((`o`.`area_id` = `a`.`id`))) join `circuito` `ci` on((`o`.`circuito_id` = `ci`.`id`))) join `inspeccion` `i` on((`i`.`orden_inspeccion_id` = `o`.`id`))) join `motivo_inspeccion` `mo` on((`o`.`motivo_inspeccion_id` = `mo`.`id`))) left join `view_inspectores` `ins` on((`ins`.`inspeccion_id` = `i`.`id`))) left join `view_direcciones` `d` on((`o`.`establecimiento_id` = `d`.`Id_Establecimiento`))) where ((isnull(`o`.`eliminada`) or (`o`.`eliminada` = 0)) and (`o`.`checklist` is not null)) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `Tabla_preguntas_inspeccion`
---
-
-/*!50001 DROP TABLE IF EXISTS `Tabla_preguntas_inspeccion`*/;
-/*!50001 DROP VIEW IF EXISTS `Tabla_preguntas_inspeccion`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `Tabla_preguntas_inspeccion` AS select `ir`.`id` AS `Id_resultado`,`oi`.`checklist` AS `checklist`,`erp`.`pregunta_id` AS `pregunta_id`,`ep`.`pregunta` AS `pregunta` from (((`inspecciones_resultados` `ir` join `orden_inspeccion` `oi` on((`ir`.`orden_inspeccion_id` = `oi`.`id`))) join `encuesta_requisitos_pregunta_grupo` `erp` on((`erp`.`pregunta_id` = `ir`.`pregunta_id`))) join `encuesta_pregunta` `ep` on((`ep`.`id` = `erp`.`pregunta_id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `Tabla_preguntas_respuestas_calificadas`
---
-
-/*!50001 DROP TABLE IF EXISTS `Tabla_preguntas_respuestas_calificadas`*/;
-/*!50001 DROP VIEW IF EXISTS `Tabla_preguntas_respuestas_calificadas`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `Tabla_preguntas_respuestas_calificadas` AS select `tpi`.`pregunta_id` AS `id_pregunta`,`iresp`.`respuesta_id` AS `respuesta_id`,`ir`.`grupo_id` AS `grupo_pregunta`,`er`.`Respuesta` AS `Respuesta`,`ir`.`RespuestaLibre` AS `respuestaLibre`,'' AS `RiesgoSeveroS/N` from (((`Tabla_preguntas_inspeccion` `tpi` join `inspecciones_resultados` `ir` on(((`tpi`.`Id_resultado` = `ir`.`orden_inspeccion_id`) and (`tpi`.`pregunta_id` = `ir`.`pregunta_id`)))) left join `inspecciones_respuestas` `iresp` on((`ir`.`id` = `iresp`.`resultado_id`))) left join `encuesta_respuestas` `er` on((`iresp`.`respuesta_id` = `er`.`id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `Vista_total_faltas`
---
-
-/*!50001 DROP TABLE IF EXISTS `Vista_total_faltas`*/;
-/*!50001 DROP VIEW IF EXISTS `Vista_total_faltas`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `Vista_total_faltas` AS select `au`.`checklist` AS `checklist`,count(0) AS `cantidad de faltas` from `acta_utilizada` `au` group by `au`.`checklist` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `view_actuaciones`
---
-
-/*!50001 DROP TABLE IF EXISTS `view_actuaciones`*/;
-/*!50001 DROP VIEW IF EXISTS `view_actuaciones`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `view_actuaciones` AS select group_concat(`ta`.`tipoActuacion`,'-',`a`.`numero`,'-',`r`.`reparticion`,'-',`a`.`anio` separator ',') AS `Actuaciones`,`a`.`Id_Establecimiento` AS `Id_Establecimiento` from ((`actuacion` `a` left join `reparticion` `r` on((`a`.`reparticion_id` = `r`.`id`))) left join `tipo_actuacion` `ta` on((`a`.`tipo_id` = `ta`.`id`))) group by `a`.`Id_Establecimiento` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `view_direcciones`
---
-
-/*!50001 DROP TABLE IF EXISTS `view_direcciones`*/;
-/*!50001 DROP VIEW IF EXISTS `view_direcciones`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `view_direcciones` AS select group_concat(`c`.`Calle`,' ',`d`.`Altura`,' ',coalesce(`d`.`Piso`,''),' ',coalesce(`d`.`Dpto`,''),' ',coalesce(`d`.`Local`,''),'<br>' separator ',') AS `direccion`,`d`.`Id_Establecimiento` AS `Id_Establecimiento`,group_concat(distinct `d`.`Comuna` separator ',') AS `comuna`,group_concat(distinct `d`.`SMP` separator ',') AS `smp`,group_concat(distinct `d`.`cmr` separator ',') AS `cmr` from (`direccion` `d` join `calles` `c` on((`d`.`Id_Calle` = `c`.`id`))) group by `d`.`Id_Establecimiento` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `view_establecimientos`
---
-
-/*!50001 DROP TABLE IF EXISTS `view_establecimientos`*/;
-/*!50001 DROP VIEW IF EXISTS `view_establecimientos`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `view_establecimientos` AS select `e`.`id` AS `id`,`es`.`Estado` AS `Estado`,`ru`.`Rubros` AS `Rubros`,`rp`.`RubroPrincipal` AS `RubroPrincipal`,`d`.`direccion` AS `Direcciones`,`d`.`comuna` AS `Comunas`,`a`.`Actuaciones` AS `Actuaciones`,concat(coalesce(`rz`.`nombre1`,''),' ',coalesce(`rz`.`nombre2`,'')) AS `RazonSocial`,`rz`.`cuit` AS `cuit`,`d`.`smp` AS `SMP`,`e`.`favorito` AS `favorito`,`d`.`cmr` AS `cmr` from ((((((((`notificaciones`.`establecimiento` `e` join `notificaciones`.`view_direcciones` `d` on((`e`.`id` = `d`.`Id_Establecimiento`))) left join `notificaciones`.`estado` `es` on((`es`.`id` = `e`.`Id_Estado`))) left join `notificaciones`.`rubro_principal` `rp` on((`e`.`Id_Rubro_Principal` = `rp`.`id`))) left join `notificaciones`.`establecimientos_razonessociales` `er` on(((`e`.`id` = `er`.`establecimiento_id`) and (`er`.`fecha_inicio` = (select max(`notificaciones`.`establecimientos_razonessociales`.`fecha_inicio`) from `notificaciones`.`establecimientos_razonessociales` where (`notificaciones`.`establecimientos_razonessociales`.`establecimiento_id` = `e`.`id`)))))) left join `notificaciones`.`razon_social` `rz` on((`rz`.`id` = `er`.`razon_social_id`))) left join `notificaciones`.`view_rubros` `ru` on((`ru`.`establecimiento_id` = `e`.`id`))) left join `notificaciones`.`view_actuaciones` `a` on((`a`.`Id_Establecimiento` = `e`.`id`))) left join `notificaciones`.`view_inspecciones` `vi` on((`vi`.`establecimiento_id` = `e`.`id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `view_inspecciones`
---
-
-/*!50001 DROP TABLE IF EXISTS `view_inspecciones`*/;
-/*!50001 DROP VIEW IF EXISTS `view_inspecciones`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `view_inspecciones` AS select `o`.`id` AS `id`,`o`.`id_sap` AS `id_sap`,`o`.`checklist` AS `checklist`,`i`.`fecha_inspeccion` AS `fecha_inspeccion`,`a`.`area` AS `area`,`d`.`direccion` AS `Direcciones`,`ins`.`Inspectores` AS `Inspectores`,`ci`.`circuito` AS `circuito`,`d`.`smp` AS `SMP`,`d`.`comuna` AS `comuna`,`o`.`establecimiento_id` AS `establecimiento_id`,`o`.`anulada` AS `anulada`,`mo`.`motivo` AS `motivo` from ((((((`notificaciones`.`orden_inspeccion` `o` join `notificaciones`.`area` `a` on((`o`.`area_id` = `a`.`id`))) join `notificaciones`.`circuito` `ci` on((`o`.`circuito_id` = `ci`.`id`))) join `notificaciones`.`inspeccion` `i` on((`i`.`orden_inspeccion_id` = `o`.`id`))) join `notificaciones`.`motivo_inspeccion` `mo` on((`o`.`motivo_inspeccion_id` = `mo`.`id`))) left join `notificaciones`.`view_inspectores` `ins` on((`ins`.`inspeccion_id` = `i`.`id`))) left join `notificaciones`.`view_direcciones` `d` on((`o`.`establecimiento_id` = `d`.`Id_Establecimiento`))) where ((isnull(`o`.`eliminada`) or (`o`.`eliminada` = 0)) and (`o`.`checklist` is not null)) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `view_inspectores`
---
-
-/*!50001 DROP TABLE IF EXISTS `view_inspectores`*/;
-/*!50001 DROP VIEW IF EXISTS `view_inspectores`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `view_inspectores` AS select group_concat(`u`.`apellido`,', ',`u`.`nombre` separator ',') AS `Inspectores`,`i`.`inspeccion_id` AS `inspeccion_id` from (`inspeccion_usuario` `i` join `usuarios` `u` on((`u`.`id` = `i`.`usuario_id`))) group by `i`.`inspeccion_id` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `view_rubros`
---
-
-/*!50001 DROP TABLE IF EXISTS `view_rubros`*/;
-/*!50001 DROP VIEW IF EXISTS `view_rubros`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `view_rubros` AS select group_concat(`ru`.`Rubro` separator ',') AS `Rubros`,`er`.`establecimiento_id` AS `establecimiento_id` from (`establecimientos_rubros` `er` join `rubro` `ru` on((`er`.`rubro_id` = `ru`.`id`))) group by `er`.`establecimiento_id` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `vista_all_direcciones`
---
-
-/*!50001 DROP TABLE IF EXISTS `vista_all_direcciones`*/;
-/*!50001 DROP VIEW IF EXISTS `vista_all_direcciones`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
-/*!50001 VIEW `vista_all_direcciones` AS select group_concat(`c`.`Calle`,' ',`d`.`Altura`,' ',coalesce(`d`.`Piso`,''),' ',coalesce(`d`.`Dpto`,''),' ',coalesce(`d`.`Local`,''),'<br>' separator '//') AS `direccion`,`d`.`Id_Establecimiento` AS `Id_Establecimiento`,group_concat(distinct `d`.`Comuna` separator '//') AS `comuna`,group_concat(distinct `d`.`SMP` separator '//') AS `smp`,group_concat(distinct `d`.`cmr` separator '//') AS `cmr`,group_concat(distinct `d`.`Lon` separator '//') AS `longitud`,group_concat(distinct `d`.`Lat` separator '//') AS `latitud` from (`direccion` `d` join `calles` `c` on((`d`.`Id_Calle` = `c`.`id`))) group by `d`.`Id_Establecimiento` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-12-01 17:52:07
