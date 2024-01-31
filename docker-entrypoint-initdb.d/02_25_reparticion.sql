@@ -1,0 +1,26 @@
+
+--
+-- Table structure for table `reparticion`
+--
+
+DROP TABLE IF EXISTS `reparticion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reparticion` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `reparticion` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `prioridad` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UNIQ_4F79FE864F79FE86` (`reparticion`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reparticion`
+--
+
+LOCK TABLES `reparticion` WRITE;
+/*!40000 ALTER TABLE `reparticion` DISABLE KEYS */;
+INSERT INTO `reparticion` VALUES (1,'GCABA-DGCONTA',NULL),(2,'GCABA-DGET',NULL),(3,'GCABA-DGAI',NULL),(4,'GCABA-APRA',NULL),(5,'GCABA-DGEAMB',NULL),(7,'GCABA-DGCONT',NULL),(8,'GCABA-DGTALAPRA',NULL),(9,'GCABA-MGEYA',NULL),(10,'GCABA-COMUNA 1',NULL),(11,'GCABA-COMUNA 2',NULL),(12,'GCABA-COMUNA 3',NULL),(13,'GCABA-COMUNA 4',NULL),(14,'GCABA-COMUNA 5',NULL),(15,'GCABA-COMUNA 6',NULL),(16,'GCABA-COMUNA 7',NULL),(17,'GCABA-COMUNA 8',NULL),(18,'GCABA-COMUNA 9',NULL),(19,'GCABA-COMUNA 10',NULL),(20,'GCABA-COMUNA 11',NULL),(21,'GCABA-COMUNA 12',NULL),(22,'GCABA-COMUNA 13',NULL),(23,'GCABA-COMUNA 14',NULL),(24,'GCABA-COMUNA 15',NULL),(25,'GCABA-AGC',NULL),(26,'DGCCA',NULL),(27,'SUACI',NULL),(28,'DGCFE',NULL),(29,'UAAFE',NULL),(30,'DGET',NULL),(31,'DGCONTA',NULL),(32,'ERSP',NULL),(34,'MGEYA-DGTAD',NULL),(35,'GCABA-DGCONTA2',NULL),(36,'GCBA-APRA',0);
+/*!40000 ALTER TABLE `reparticion` ENABLE KEYS */;
+UNLOCK TABLES;
