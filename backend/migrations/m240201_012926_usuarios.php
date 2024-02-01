@@ -1,17 +1,20 @@
 <?php
 
+use yii\db\Schema;
 use yii\db\Migration;
 
-class m130524_201442_init extends Migration
+class m240201_012926_usuarios extends Migration
 {
+
+    public function init()
+    {
+        $this->db = 'db';
+        parent::init();
+    }
 
     public function safeUp()
     {
-        $tableOptions = null;
-        if ($this->db->driverName === 'mysql') {
-            // https://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
-            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
-        }
+        $tableOptions = 'ENGINE=InnoDB';
 
         $this->createTable(
             '{{%usuarios}}',
@@ -50,7 +53,7 @@ class m130524_201442_init extends Migration
                 'email'=> $this->text()->null()->defaultValue(null),
                 'auth_key'=> $this->text()->null()->defaultValue(null),
                 'auth_key_column'=> $this->smallInteger(6)->null()->defaultValue(null),
-                'status'=> $this->smallInteger(6)->null()->defaultValue(10),
+                'status'=> $this->smallInteger(6)->null()->defaultValue(null),
                 'created_at'=> $this->integer(20)->null()->defaultValue(null),
                 'updated_at'=> $this->integer(20)->null()->defaultValue(null),
             ],$tableOptions
