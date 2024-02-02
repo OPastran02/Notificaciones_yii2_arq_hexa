@@ -3,7 +3,7 @@
 use yii\db\Schema;
 use yii\db\Migration;
 
-class m240129_171836_Relations extends Migration
+class m240129_171836_denunciante_Relations extends Migration
 {
 
     public function init()
