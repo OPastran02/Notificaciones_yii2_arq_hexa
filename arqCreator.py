@@ -39,7 +39,7 @@ def convert_yii_model_to_domain(file_path, folder_structure):
     # Adhiere all_properties al texto_final con identación
     indented_properties = indent_code(all_properties, 8)
     texto_final += indented_properties
-    
+
     # Genera el método estático create
     create_method = generate_create_method(all_properties)
     texto_final += create_method
@@ -48,6 +48,9 @@ def convert_yii_model_to_domain(file_path, folder_structure):
     from_primitives_method = generate_from_primitives_method(all_properties)
     texto_final += from_primitives_method
 
+    # Usar la función para generar el método toPrimitives
+    to_primitives_method = generate_to_primitives_method(all_properties)
+    texto_final += to_primitives_method
 
     # Elimina los comentarios
     domain_model = re.sub(r'/\*.*?\*/', '', domain_model, flags=re.DOTALL)  # Elimina comentarios de bloque
@@ -64,7 +67,6 @@ def convert_yii_model_to_domain(file_path, folder_structure):
 
     # Mueve declare(strict_types=1); después de la primera declaración <?php
     domain_model = re.sub(r'(<\?php)\n', r'\1\ndeclare(strict_types=1);\n', domain_model, count=1)
-
 
     print(texto_final)
     return texto_final, domain_model
@@ -139,6 +141,20 @@ def generate_from_primitives_method(properties):
     from_primitives_method += "\n        );\n    }\n"
     
     return from_primitives_method
+
+def generate_to_primitives_method(properties):
+    lines = properties.split('\n')[1:-2]  # Elimina la primera y las dos últimas líneas
+    to_primitives_method = "\n\n    public function toPrimitives(): array\n    {\n        return [\n"
+    
+    for line in lines:
+        if 'private' in line:
+            line = line.replace('private', '').strip()
+            property_name = line.split('$')[1].rstrip(';').strip()
+            to_primitives_method += f"            '{property_name}' => isset($this->{property_name}) ? $this->{property_name}->value() : null,\n"
+    
+    to_primitives_method += "        ];\n    }"
+
+    return to_primitives_method
 
 folder_structure = 'api\\Core\\Acta\\Acta\\Domain'
 file_path = './common/models/Acta.php'  # Reemplaza con la ruta real de tu archivo PHP
