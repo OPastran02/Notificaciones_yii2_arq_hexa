@@ -1,145 +1,148 @@
+import os
 import re
 
-def convert_yii_model_to_domain(file_path, folder_structure):
+####################################################################################################
+####### CREADOR DE ARQUITECTURA HEXAGONAL PHP #####################################################
+####################################################################################################
+
+
+###################################################################################################
+###################     DOMINIO     ###############################################################
+###################################################################################################
+
+#### GLOBALES
+
+global all_properties
+global variables_clase
+global variables_primitivas
+global nombre_variable
+global esObjeto
+
+
+#### PARAMETROS INICIALES
+
+core_folder='Acta'
+folder_structure = 'api\\Core\\Acta\\Acta\\Domain'
+file_path = './common/models/Acta.php'  
+
+#### MODELO DOMINIO
+
+def convert_yii_model_to_domain(file_path, folder_structure, core_folder):
+    global all_properties
+    global variables_clase
+    global variables_primitivas
+    global nombre_variable
+    global esObjeto
+
+    variables_clase = []
+    variables_primitivas = []
+    nombre_variable = []
+    esObjeto=[]
+
+
+    
     # Lee el contenido del archivo PHP
     with open(file_path, 'r') as file:
         yii_model = file.read()
 
-    # Agrega las declaraciones como las primeras dos líneas
-    domain_model = "<?php\n" + yii_model
+    # Obtener variable global
+    yii_model = re.sub(r'\@property\s+(\S+)\s+\$(\w+)', crate_global_variables, yii_model)    
+
+    new_namespace = folder_structure
     texto_final = "<?php\ndeclare(strict_types=1);"
-
-    # Reemplaza el espacio de nombres
-    namespace_match = re.search(r'namespace (\S+);', domain_model)
-    if namespace_match:
-        current_namespace = namespace_match.group(1)
-        new_namespace = folder_structure.replace('\\', '/')
-        domain_model = domain_model.replace(current_namespace, new_namespace)
-
-    # Agrega la línea de uso de Yii
     texto_final += "\n\nuse Yii;"
-    
-    # Agrega la línea de namespace modificada
-    texto_final += f"\n\nnamespace {new_namespace};"
+    texto_final += f"\n\nnamespace {new_namespace};\n\n"
 
     # Encuentra el nombre de la clase y extiende AggregateRoot
-    class_match = re.search(r'class\s+(\w+)\s+extends\s+\\yii\\db\\ActiveRecord', domain_model)    
+    class_match = re.search(r'class\s+(\w+)\s+extends\s+\\yii\\db\\ActiveRecord', yii_model)
     if class_match:
         class_name = class_match.group(1)
-        domain_model = domain_model.replace(f'class {class_name} extends \\yii\\db\\ActiveRecord', f'final class {class_name} extends AggregateRoot')
-        # Agrega la declaración de clase al texto_final
-        texto_final += f"\n\nclass {class_name} extends AggregateRoot\n{{\n"
+        texto_final += create_imports(class_name)
+        texto_final += f"\n\nclass {class_name} extends AggregateRoot\n{{\n\n"
 
-    # Encuentra y reemplaza cada propiedad
-    global all_properties
-    all_properties = 'public function __construct(\n'
-    domain_model = re.sub(r'\@property\s+(\S+)\s+\$(\w+)', convert_property_to_php_syntax, domain_model)
-    all_properties += ')\n{}'
+    texto_final += create_construct_method()
+    texto_final += generate_create_method()
+    texto_final += generate_from_primitives_method()
+    texto_final += "\n}"
 
-    # Adhiere all_properties al texto_final con identación
-    indented_properties = indent_code(all_properties, 8)
-    texto_final += indented_properties
 
-    # Genera el método estático create
-    create_method = generate_create_method(all_properties)
-    texto_final += create_method
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Domain'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
 
-    # Agregar el método fromPrimitives al final del código
-    from_primitives_method = generate_from_primitives_method(all_properties)
-    texto_final += from_primitives_method
+    output_file_path = os.path.join(output_folder_path, f'{class_name}.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(texto_final)
 
-    # Usar la función para generar el método toPrimitives
-    to_primitives_method = generate_to_primitives_method(all_properties)
-    texto_final += to_primitives_method
+    print(f"Archivo guardado como {output_file_path}")
+    return texto_final, yii_model
 
-    # Elimina los comentarios
-    domain_model = re.sub(r'/\*.*?\*/', '', domain_model, flags=re.DOTALL)  # Elimina comentarios de bloque
-    domain_model = re.sub(r'//.*?$', '', domain_model, flags=re.MULTILINE)  # Elimina comentarios de línea
+def crate_global_variables(match):
+    aux_var = match.group(1).replace('|null', '').replace('[]', '')
+    variables_primitivas.append(aux_var)
+    nombre_variable.append(match.group(2))
 
-    # Elimina las funciones no necesarias
-    domain_model = re.sub(r'public function (rules|attributeLabels|getActaAsignacions|getActaUtilizada|find)\(.+?\}\n', '', domain_model)
-
-    # Reemplaza el constructor
-    domain_model = re.sub(r'public function __construct\((.+?)\)\s+{', r'public function __construct(\1) {', domain_model)
-
-    # Reemplaza find
-    domain_model = re.sub(r'public static function find\(\)\s+{', 'public static function find(): self', domain_model)
-
-    # Mueve declare(strict_types=1); después de la primera declaración <?php
-    domain_model = re.sub(r'(<\?php)\n', r'\1\ndeclare(strict_types=1);\n', domain_model, count=1)
-
-    print(texto_final)
-    return texto_final, domain_model
-
-def convert_property_to_php_syntax(match):
-    global all_properties
-    property_type = match.group(1)
-    property_name = match.group(2)
-
-    # Ajustar el tipo según si la variable contiene "id"
-    if "id" in property_name.lower():
-        converted_type = "UUID"
+    if "id" in match.group(2).lower():
+        variables_clase.append("UUID")
     else:
-        converted_type = property_name
+        variables_clase.append(match.group(2).capitalize().replace('_', ''))
+    
+    if aux_var == "int" or aux_var == "float" or aux_var == "bool" or aux_var == "string":
+        esObjeto.append(0)
+    else:
+        esObjeto.append(1)
 
-    # Quitar guiones bajos y capitalizar las palabras
-    converted_type_cleaned = ''.join(word.capitalize() for word in converted_type.split('_'))
+def create_imports(class_name):
+    create_import = f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\ValueObject\\{{\n'
+    for indice, elemento in enumerate(variables_clase):
+        if esObjeto[indice] == 0 and variables_clase[indice] != "UUID": 
+            create_import += f'    {variables_clase[indice]},\n'
+    create_import +="}\n\n"
+    create_import +="use api\Shared\Domain\ValueObject\{\n    UUID,\n    NID,\n};"
 
-    all_properties += f'private {converted_type_cleaned} ${property_name};\n'
-    return f'{converted_type_cleaned} ${property_name};'
+    return create_import
 
+def create_construct_method():
+    create_construct = f'    public function __construct(\n'
 
-def generate_create_method(properties):
-    lines = properties.split('\n')[1:-2]  # Elimina la primera y las dos últimas líneas
+    for indice, elemento in enumerate(variables_clase):
+        create_construct += f'        private {variables_clase[indice]} ${nombre_variable[indice]},\n'
+
+    create_construct += '    )\n    {}'
+    return create_construct
+
+def generate_create_method():
     create_method = "\n\n    public static function create(\n"
-    
-    for line in lines:
-        if 'private' in line:
-            line = line.replace('private', '').strip()
-            property_type = line.split(' ')[0].strip()
-            property_name = line.split('$')[1].rstrip(';').strip()
-            create_method += f'        {property_type} ${property_name},\n'
-    
+    for indice, elemento in enumerate(variables_clase):
+      create_method += f'        {variables_clase[indice]} ${nombre_variable[indice]},\n'
+
     create_method = create_method.rstrip(',\n')  # Elimina la última coma
     create_method += "\n    ): self \n    {\n        return new self(\n"
     
-    for line in lines:
-        if 'private' in line:
-            property_name = line.split('$')[1].rstrip(';').strip()
-            create_method += f'            ${property_name},\n'
+    for indice, elemento in enumerate(variables_clase):
+        create_method += f'            ${nombre_variable[indice]},\n'
     
     create_method = create_method.rstrip(',\n')  # Elimina la última coma
     create_method += "\n        );\n    }\n"
     
     return create_method
 
-def indent_code(code, spaces):
-    lines = code.split('\n')
-    indented_code = '\n'.join([' ' * spaces + line for line in lines])
-    return indented_code
-
-def generate_from_primitives_method(properties):
-    lines = properties.split('\n')[1:-2]  # Elimina la primera y las dos últimas líneas
+def generate_from_primitives_method():
     from_primitives_method = "\n\n    public static function fromPrimitives(\n"
     
-    for line in lines:
-        if 'private' in line:
-            line = line.replace('private', '').strip()
-            property_type = line.split(' ')[0].strip()
-            property_name = line.split('$')[1].rstrip(';').strip()
-            from_primitives_method += f'        {property_type} ${property_name},\n'
+    for indice, elemento in enumerate(variables_clase):
+        from_primitives_method += f'        {variables_primitivas[indice]} ${nombre_variable[indice]},\n'
     
     from_primitives_method = from_primitives_method.rstrip(',\n')  # Elimina la última coma
     from_primitives_method += "\n    ): self \n    {\n        return new self(\n"
     
-    for line in lines:
-        if 'private' in line:
-            property_name = line.split('$')[1].rstrip(';').strip()
-            from_primitives_method += f'            new {property_name}(${property_name}),\n'
+    for indice, elemento in enumerate(variables_clase):
+        from_primitives_method += f'            new {variables_clase[indice]}(${nombre_variable[indice]}),\n'
     
-    from_primitives_method = from_primitives_method.rstrip(',\n')  # Elimina la última coma
+    from_primitives_method = from_primitives_method.rstrip(',\n')  # Elimina la última coma y el paréntesis adicional
     from_primitives_method += "\n        );\n    }\n"
     
+    print (from_primitives_method)
     return from_primitives_method
 
 def generate_to_primitives_method(properties):
@@ -156,10 +159,9 @@ def generate_to_primitives_method(properties):
 
     return to_primitives_method
 
-folder_structure = 'api\\Core\\Acta\\Acta\\Domain'
-file_path = './common/models/Acta.php'  # Reemplaza con la ruta real de tu archivo PHP
 
-domain_model_content, generated_properties = convert_yii_model_to_domain(file_path, folder_structure)
-
-# Imprime el contenido final
-#print("\nGenerated Properties:\n", generated_properties)
+domain_model_content, generated_properties = convert_yii_model_to_domain(file_path, folder_structure,core_folder)
+print(variables_clase) 
+print(variables_primitivas) 
+print(nombre_variable) 
+print(esObjeto)
