@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use Yii;
-
 namespace api\Core\Acta\Acta\Domain;
 
 use api\Core\Acta\Acta\Domain\ValueObject\{
@@ -13,12 +11,14 @@ use api\Core\Acta\Acta\Domain\ValueObject\{
     Numerogedoformulario,
     Fechadecreaciongedoformulario,
     Numeroactagedoformulario,
-}
+};
 
 use api\Shared\Domain\ValueObject\{
     UUID,
     NID,
 };
+
+use Yii;
 
 class Acta extends AggregateRoot
 {
@@ -107,9 +107,29 @@ class Acta extends AggregateRoot
             new Numerogedoformulario($NumeroGedoFormulario),
             new Fechadecreaciongedoformulario($FechaDeCreacionGedoFormulario),
             new Numeroactagedoformulario($NumeroActaGedoFormulario),
-            new Actaasignacions($actaAsignacions),
-            new Actautilizada($actaUtilizada)
+            $actaAsignacions,
+            $actaUtilizada
         );
     }
 
+
+    public function toPrimitives(): array
+    {
+        return [
+            'id' => $this->id->value(),
+            'id_inspeccion' => $this->id_inspeccion->value(),
+            'estado_id' => $this->estado_id->value(),
+            'Serie' => $this->Serie->value(),
+            'Numero' => $this->Numero->value(),
+            'Fecha_Creado' => $this->Fecha_Creado->value(),
+            'Id_Usuario_Creador' => $this->Id_Usuario_Creador->value(),
+            'Fecha_Modificado' => $this->Fecha_Modificado->value(),
+            'Id_Usuario_Modificador' => $this->Id_Usuario_Modificador->value(),
+            'NumeroGedoFormulario' => $this->NumeroGedoFormulario->value(),
+            'FechaDeCreacionGedoFormulario' => $this->FechaDeCreacionGedoFormulario->value(),
+            'NumeroActaGedoFormulario' => $this->NumeroActaGedoFormulario->value(),
+            'actaAsignacions' => $this->actaAsignacions->toPrimitives(),
+            'actaUtilizada' => $this->actaUtilizada->toPrimitives(),
+        ];
+    }
 }

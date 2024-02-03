@@ -50,7 +50,6 @@ def convert_yii_model_to_domain(file_path, folder_structure, core_folder):
 
     new_namespace = folder_structure
     texto_final = "<?php\ndeclare(strict_types=1);"
-    texto_final += "\n\nuse Yii;"
     texto_final += f"\n\nnamespace {new_namespace};\n\n"
 
     # Encuentra el nombre de la clase y extiende AggregateRoot
@@ -58,11 +57,13 @@ def convert_yii_model_to_domain(file_path, folder_structure, core_folder):
     if class_match:
         class_name = class_match.group(1)
         texto_final += create_imports(class_name)
+        texto_final += "\n\nuse Yii;"
         texto_final += f"\n\nclass {class_name} extends AggregateRoot\n{{\n\n"
 
     texto_final += create_construct_method()
     texto_final += generate_create_method()
     texto_final += generate_from_primitives_method()
+    texto_final += generate_to_primitives_method()
     texto_final += "\n}"
 
 
@@ -97,7 +98,7 @@ def create_imports(class_name):
     for indice, elemento in enumerate(variables_clase):
         if esObjeto[indice] == 0 and variables_clase[indice] != "UUID": 
             create_import += f'    {variables_clase[indice]},\n'
-    create_import +="}\n\n"
+    create_import +="};\n\n"
     create_import +="use api\Shared\Domain\ValueObject\{\n    UUID,\n    NID,\n};"
 
     return create_import
@@ -137,31 +138,30 @@ def generate_from_primitives_method():
     from_primitives_method += "\n    ): self \n    {\n        return new self(\n"
     
     for indice, elemento in enumerate(variables_clase):
-        from_primitives_method += f'            new {variables_clase[indice]}(${nombre_variable[indice]}),\n'
+        if esObjeto[indice] == 0:
+            from_primitives_method += f'            new {variables_clase[indice]}(${nombre_variable[indice]}),\n'
+        else:
+            from_primitives_method += f'            ${nombre_variable[indice]},\n'
     
     from_primitives_method = from_primitives_method.rstrip(',\n')  # Elimina la última coma y el paréntesis adicional
     from_primitives_method += "\n        );\n    }\n"
-    
-    print (from_primitives_method)
+
     return from_primitives_method
 
-def generate_to_primitives_method(properties):
-    lines = properties.split('\n')[1:-2]  # Elimina la primera y las dos últimas líneas
+def generate_to_primitives_method():
     to_primitives_method = "\n\n    public function toPrimitives(): array\n    {\n        return [\n"
     
-    for line in lines:
-        if 'private' in line:
-            line = line.replace('private', '').strip()
-            property_name = line.split('$')[1].rstrip(';').strip()
-            to_primitives_method += f"            '{property_name}' => isset($this->{property_name}) ? $this->{property_name}->value() : null,\n"
-    
+    for indice, elemento in enumerate(variables_clase):
+        if esObjeto[indice] == 0 :
+            to_primitives_method += f"            '{nombre_variable[indice]}' => $this->{nombre_variable[indice]}->value(),\n"
+        else:
+            to_primitives_method += f"            '{nombre_variable[indice]}' => $this->{nombre_variable[indice]}->toPrimitives(),\n"        
     to_primitives_method += "        ];\n    }"
 
     return to_primitives_method
 
-
 domain_model_content, generated_properties = convert_yii_model_to_domain(file_path, folder_structure,core_folder)
 print(variables_clase) 
 print(variables_primitivas) 
-print(nombre_variable) 
+print(variables_clase) 
 print(esObjeto)
