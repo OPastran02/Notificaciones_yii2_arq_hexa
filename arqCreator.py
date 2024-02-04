@@ -17,7 +17,7 @@ global variables_clase
 global variables_primitivas
 global nombre_variable
 global esObjeto
-
+global class_name
 
 #### PARAMETROS INICIALES
 
@@ -33,13 +33,12 @@ def convert_yii_model_to_domain(file_path, folder_structure, core_folder):
     global variables_primitivas
     global nombre_variable
     global esObjeto
+    global class_name
 
     variables_clase = []
     variables_primitivas = []
     nombre_variable = []
     esObjeto=[]
-
-
     
     # Lee el contenido del archivo PHP
     with open(file_path, 'r') as file:
@@ -160,8 +159,67 @@ def generate_to_primitives_method():
 
     return to_primitives_method
 
+#### VALUE OBJECTS
+def convert_yii_model_to_value_object(file_path, folder_structure, core_folder):
+    for indice, elemento in enumerate(variables_clase):
+        if esObjeto[indice] == 0 and variables_clase[indice] != "UUID":
+            valueObject=""
+            clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+            clase_creada +=f'namespace {folder_structure}\\ValueObject;\n\n'
+
+            if variables_primitivas[indice] == "int":
+                valueObject += "IntValueObject"
+            elif variables_primitivas[indice] == "string":
+                valueObject += "StringValueObject"
+            elif variables_primitivas[indice] == "bool":
+                valueObject += "BoolValueObject"
+            elif variables_primitivas[indice] == "float":
+                valueObject += "FloatValueObject"
+
+            clase_creada +=f'api\\Shared\\Domain\\ValueObject\\Primitives\\{valueObject};\n\n' 
+
+            clase_creada +=f'final class {variables_clase[indice]} extends {valueObject}\n{{\n\n'
+            clase_creada +=f'   protected {variables_primitivas[indice]} $value;\n\n'
+            clase_creada +=f'   public function __construct({variables_primitivas[indice]} $value)\n   {{\n'
+            clase_creada +=f'      parent::__construct($value);\n      $this->value = $value;\n   }}\n\n'
+
+            clase_creada +=f'   public function value(): {variables_primitivas[indice]}\n   {{\n'
+            clase_creada +=f'      return $this->value = $value;\n   }}\n\n}}'
+
+            output_folder_path = f'./api/Core/{core_folder}/{class_name}/Domain/ValueObject'
+            if not os.path.exists(output_folder_path):
+                os.makedirs(output_folder_path)
+
+            output_file_path = os.path.join(output_folder_path, f'{variables_clase[indice]}.php')
+            with open(output_file_path, 'w') as output_file:
+                output_file.write(clase_creada)
+
+#### REPOSITORY
+def convert_yii_model_to_repository(file_path, folder_structure, core_folder):
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace {folder_structure}\\Repository;\n\n'
+    clase_creada +=f'interface I{class_name}ReadRepository\n{{\n'
+    clase_creada +=f'public function get($id) : ?{class_name};\n'
+    clase_creada +=f'public function getAll($id);\n}}'
+    clase_creada +=f'public function getByCriteria($criteria);\n}}'
+
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Domain/Repository'
+    output_file_path = os.path.join(output_folder_path, f'I{class_name}ReadRepository.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
+
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace {folder_structure}\\Repository;\n\n'
+    clase_creada +=f'interface I{class_name}WriteRepository\n{{\n'
+    clase_creada +=f'public function create(${class_name}): ?{class_name};\n'
+    clase_creada +=f'public function delete($id): void;\n'
+    clase_creada +=f'public function update($id,${class_name}):?{class_name};\n}}'
+
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Domain/Repository'
+    output_file_path = os.path.join(output_folder_path, f'I{class_name}WriteRepository.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
+
 domain_model_content, generated_properties = convert_yii_model_to_domain(file_path, folder_structure,core_folder)
-print(variables_clase) 
-print(variables_primitivas) 
-print(variables_clase) 
-print(esObjeto)
+convert_yii_model_to_value_object(file_path, folder_structure,core_folder)
+convert_yii_model_to_repository(file_path, folder_structure,core_folder)
