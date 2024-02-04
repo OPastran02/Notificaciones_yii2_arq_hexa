@@ -12,10 +12,10 @@ use api\Core\Ruido\Ruido\Dommain\{
 use api\Core\Ruido\Ruido\Application\DTO\RuidoCreateDTO;
 use Ramsey\Uuid\Uuid;
 
-final class CreateRuido
+final class DeleteRuido
 {
 
-   public function __invoke(RuidoCreateDTO $RuidoDTO, IRuidoReadRepositor $repository)   {
+   public function __invoke($id, IRuidoReadRepositor $repository)   {
        //$arr = [];
        //$arr['id'] = Uuid::uuid4()->toString();
        //$arr['nickname'] = $avatarDTO->nickname;
