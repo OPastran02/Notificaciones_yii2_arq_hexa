@@ -21,9 +21,9 @@ global class_name
 
 #### PARAMETROS INICIALES
 
-core_folder='Acta'
-folder_structure = 'api\\Core\\Acta\\Acta\\Domain'
-file_path = './common/models/Acta.php'  
+core_folder='Ruido'
+folder_structure = 'api\\Core\\Ruido\\Ruido\\Domain'
+file_path = './common/models/Ruido.php'  
 
 #### MODELO DOMINIO
 
@@ -56,7 +56,7 @@ def convert_yii_model_to_domain(file_path, folder_structure, core_folder):
     if class_match:
         class_name = class_match.group(1)
         texto_final += create_imports(class_name)
-        texto_final += "\n\nuse Yii;"
+        texto_final += "use Yii;"
         texto_final += f"\n\nclass {class_name} extends AggregateRoot\n{{\n\n"
 
     texto_final += create_construct_method()
@@ -93,12 +93,18 @@ def crate_global_variables(match):
         esObjeto.append(1)
 
 def create_imports(class_name):
-    create_import = f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\ValueObject\\{{\n'
+
+    create_import ="use api\Shared\Domain\ValueObject\{\n    UUID,\n    NID,\n};\n\n"
+
+    create_import += f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\ValueObject\\{{\n'
     for indice, elemento in enumerate(variables_clase):
         if esObjeto[indice] == 0 and variables_clase[indice] != "UUID": 
             create_import += f'    {variables_clase[indice]},\n'
     create_import +="};\n\n"
-    create_import +="use api\Shared\Domain\ValueObject\{\n    UUID,\n    NID,\n};"
+
+    for indice, elemento in enumerate(variables_clase):
+            if esObjeto[indice] == 1 : 
+                create_import += f'use api\\Core\\{core_folder}\\{variables_clase[indice]}; //Esto relacionarlo con la clase correspondiente - {variables_clase[indice]} \n'
 
     return create_import
 
@@ -199,11 +205,14 @@ def convert_yii_model_to_repository(file_path, folder_structure, core_folder):
     clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
     clase_creada +=f'namespace {folder_structure}\\Repository;\n\n'
     clase_creada +=f'interface I{class_name}ReadRepository\n{{\n'
-    clase_creada +=f'public function get($id) : ?{class_name};\n'
-    clase_creada +=f'public function getAll($id);\n}}'
-    clase_creada +=f'public function getByCriteria($criteria);\n}}'
+    clase_creada +=f'   public function get($id) : ?{class_name};\n'
+    clase_creada +=f'   public function getAll();\n'
+    clase_creada +=f'   public function getByCriteria($criteria): ?{class_name};\n}}'
 
     output_folder_path = f'./api/Core/{core_folder}/{class_name}/Domain/Repository'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
+
     output_file_path = os.path.join(output_folder_path, f'I{class_name}ReadRepository.php')
     with open(output_file_path, 'w') as output_file:
         output_file.write(clase_creada)
@@ -211,11 +220,14 @@ def convert_yii_model_to_repository(file_path, folder_structure, core_folder):
     clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
     clase_creada +=f'namespace {folder_structure}\\Repository;\n\n'
     clase_creada +=f'interface I{class_name}WriteRepository\n{{\n'
-    clase_creada +=f'public function create(${class_name}): ?{class_name};\n'
-    clase_creada +=f'public function delete($id): void;\n'
-    clase_creada +=f'public function update($id,${class_name}):?{class_name};\n}}'
+    clase_creada +=f'   public function create(${class_name}): ?{class_name};\n'
+    clase_creada +=f'   public function delete($id): void;\n'
+    clase_creada +=f'   public function update($id,${class_name}):?{class_name};\n}}'
 
     output_folder_path = f'./api/Core/{core_folder}/{class_name}/Domain/Repository'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
+
     output_file_path = os.path.join(output_folder_path, f'I{class_name}WriteRepository.php')
     with open(output_file_path, 'w') as output_file:
         output_file.write(clase_creada)
@@ -223,3 +235,82 @@ def convert_yii_model_to_repository(file_path, folder_structure, core_folder):
 domain_model_content, generated_properties = convert_yii_model_to_domain(file_path, folder_structure,core_folder)
 convert_yii_model_to_value_object(file_path, folder_structure,core_folder)
 convert_yii_model_to_repository(file_path, folder_structure,core_folder)
+
+###################################################################################################
+###################     APLICACION  ###############################################################
+###################################################################################################
+
+def convert_yii_model_to_Query(file_path, folder_structure, core_folder):
+        clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+        clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
+        clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
+        clase_creada +=f'   {class_name},\n'
+        clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+        clase_creada +=f'}};\n\n'
+        clase_creada +=f'class Get{class_name}\n{{\n'
+        clase_creada +=f'   private I{class_name}ReadRepository $repository;\n\n'
+        clase_creada +=f'   public function __construct(I{class_name}ReadRepository $repository)\n   {{\n'
+        clase_creada +=f'       $this->repository = $repository;\n'
+        clase_creada +=f'   }}\n\n'
+        clase_creada +=f'   public function __invoke(string ${class_name}Id): ?{class_name}\n   {{\n'
+        clase_creada +=f'       return $this->repository->get(${class_name}Id);\n'
+        clase_creada +=f'   }}\n\n'
+        clase_creada +=f'}}\n\n'
+
+        output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
+        if not os.path.exists(output_folder_path):
+            os.makedirs(output_folder_path)
+
+        output_file_path = os.path.join(output_folder_path, f'Get{class_name}.php')
+        with open(output_file_path, 'w') as output_file:
+            output_file.write(clase_creada)
+
+        clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+        clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
+        clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
+        clase_creada +=f'   {class_name},\n'
+        clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+        clase_creada +=f'}};\n\n'
+        clase_creada +=f'class GetAll{class_name}\n{{\n'
+        clase_creada +=f'   private I{class_name}ReadRepository $repository;\n\n'
+        clase_creada +=f'   public function __construct(I{class_name}ReadRepository $repository)\n   {{\n'
+        clase_creada +=f'       $this->repository = $repository;\n'
+        clase_creada +=f'   }}\n\n'
+        clase_creada +=f'   public function __invoke(): ?{class_name}\n   {{\n'
+        clase_creada +=f'       return $this->repository->getAll(${class_name}Id);\n'
+        clase_creada +=f'   }}\n\n'
+        clase_creada +=f'}}\n\n'
+
+        output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
+        if not os.path.exists(output_folder_path):
+            os.makedirs(output_folder_path)
+
+        output_file_path = os.path.join(output_folder_path, f'GetAll{class_name}.php')
+        with open(output_file_path, 'w') as output_file:
+            output_file.write(clase_creada)
+
+        clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+        clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
+        clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
+        clase_creada +=f'   {class_name},\n'
+        clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+        clase_creada +=f'}};\n\n'
+        clase_creada +=f'class Get{class_name}ByCriteria\n{{\n'
+        clase_creada +=f'   private I{class_name}ReadRepository $repository;\n\n'
+        clase_creada +=f'   public function __construct(I{class_name}ReadRepository $repository)\n   {{\n'
+        clase_creada +=f'       $this->repository = $repository;\n'
+        clase_creada +=f'   }}\n\n'
+        clase_creada +=f'   public function __invoke(): ?{class_name}\n   {{\n'
+        clase_creada +=f'       return $this->repository->getByCriteria(${class_name}Id);\n'
+        clase_creada +=f'   }}\n\n'
+        clase_creada +=f'}}\n\n'
+
+        output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
+        if not os.path.exists(output_folder_path):
+            os.makedirs(output_folder_path)
+
+        output_file_path = os.path.join(output_folder_path, f'Get{class_name}ByCriteria.php')
+        with open(output_file_path, 'w') as output_file:
+            output_file.write(clase_creada)
+
+convert_yii_model_to_Query(file_path, folder_structure,core_folder)

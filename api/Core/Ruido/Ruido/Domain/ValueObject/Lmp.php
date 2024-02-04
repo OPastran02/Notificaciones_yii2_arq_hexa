@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace api\Core\Acta\Acta\Domain\ValueObject;
+namespace api\Core\Ruido\Ruido\Domain\ValueObject;
 
 api\Shared\Domain\ValueObject\Primitives\IntValueObject;
 
-final class Numero extends IntValueObject
+final class Lmp extends IntValueObject
 {
 
    protected int $value;
