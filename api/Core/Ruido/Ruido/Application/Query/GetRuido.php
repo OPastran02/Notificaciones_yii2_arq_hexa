@@ -9,16 +9,10 @@ use api\Core\Ruido\Ruido\Dommain\{
    Repository\IRuidoReadRepository
 };
 
-class GetRuido
+final class GetRuido
 {
-   private IRuidoReadRepository $repository;
 
-   public function __construct(IRuidoReadRepository $repository)
-   {
-       $this->repository = $repository;
-   }
-
-   public function __invoke(string $RuidoId): ?Ruido
+   public function __invoke(IRuidoReadRepository $repository, $RuidoId) : ?Ruido
    {
        return $this->repository->get($RuidoId);
    }

@@ -241,76 +241,123 @@ convert_yii_model_to_repository(file_path, folder_structure,core_folder)
 ###################################################################################################
 
 def convert_yii_model_to_Query(file_path, folder_structure, core_folder):
-        clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
-        clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
-        clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
-        clase_creada +=f'   {class_name},\n'
-        clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
-        clase_creada +=f'}};\n\n'
-        clase_creada +=f'class Get{class_name}\n{{\n'
-        clase_creada +=f'   private I{class_name}ReadRepository $repository;\n\n'
-        clase_creada +=f'   public function __construct(I{class_name}ReadRepository $repository)\n   {{\n'
-        clase_creada +=f'       $this->repository = $repository;\n'
-        clase_creada +=f'   }}\n\n'
-        clase_creada +=f'   public function __invoke(string ${class_name}Id): ?{class_name}\n   {{\n'
-        clase_creada +=f'       return $this->repository->get(${class_name}Id);\n'
-        clase_creada +=f'   }}\n\n'
-        clase_creada +=f'}}\n\n'
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
+    clase_creada +=f'   {class_name},\n'
+    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+    clase_creada +=f'}};\n\n'
+    clase_creada +=f'final class Get{class_name}\n{{\n\n'
+    clase_creada +=f'   public function __invoke(I{class_name}ReadRepository $repository, ${class_name}Id) : ?{class_name}\n   {{\n'
+    clase_creada +=f'       return $this->repository->get(${class_name}Id);\n'
+    clase_creada +=f'   }}\n\n'
+    clase_creada +=f'}}\n\n'
 
-        output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
-        if not os.path.exists(output_folder_path):
-            os.makedirs(output_folder_path)
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
 
-        output_file_path = os.path.join(output_folder_path, f'Get{class_name}.php')
-        with open(output_file_path, 'w') as output_file:
-            output_file.write(clase_creada)
+    output_file_path = os.path.join(output_folder_path, f'Get{class_name}.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
 
-        clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
-        clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
-        clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
-        clase_creada +=f'   {class_name},\n'
-        clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
-        clase_creada +=f'}};\n\n'
-        clase_creada +=f'class GetAll{class_name}\n{{\n'
-        clase_creada +=f'   private I{class_name}ReadRepository $repository;\n\n'
-        clase_creada +=f'   public function __construct(I{class_name}ReadRepository $repository)\n   {{\n'
-        clase_creada +=f'       $this->repository = $repository;\n'
-        clase_creada +=f'   }}\n\n'
-        clase_creada +=f'   public function __invoke(): ?{class_name}\n   {{\n'
-        clase_creada +=f'       return $this->repository->getAll(${class_name}Id);\n'
-        clase_creada +=f'   }}\n\n'
-        clase_creada +=f'}}\n\n'
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
+    clase_creada +=f'   {class_name},\n'
+    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+    clase_creada +=f'}};\n\n'
+    clase_creada +=f'final class GetAll{class_name}\n{{\n\n'
+    clase_creada +=f'   public function __invoke(I{class_name}ReadRepository $repository) : ?array\n   {{\n'
+    clase_creada +=f'       return $this->repository->getAll();\n'
+    clase_creada +=f'   }}\n\n'
+    clase_creada +=f'}}\n\n'
 
-        output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
-        if not os.path.exists(output_folder_path):
-            os.makedirs(output_folder_path)
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
 
-        output_file_path = os.path.join(output_folder_path, f'GetAll{class_name}.php')
-        with open(output_file_path, 'w') as output_file:
-            output_file.write(clase_creada)
+    output_file_path = os.path.join(output_folder_path, f'GetAll{class_name}.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
 
-        clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
-        clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
-        clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
-        clase_creada +=f'   {class_name},\n'
-        clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
-        clase_creada +=f'}};\n\n'
-        clase_creada +=f'class Get{class_name}ByCriteria\n{{\n'
-        clase_creada +=f'   private I{class_name}ReadRepository $repository;\n\n'
-        clase_creada +=f'   public function __construct(I{class_name}ReadRepository $repository)\n   {{\n'
-        clase_creada +=f'       $this->repository = $repository;\n'
-        clase_creada +=f'   }}\n\n'
-        clase_creada +=f'   public function __invoke(): ?{class_name}\n   {{\n'
-        clase_creada +=f'       return $this->repository->getByCriteria(${class_name}Id);\n'
-        clase_creada +=f'   }}\n\n'
-        clase_creada +=f'}}\n\n'
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
+    clase_creada +=f'   {class_name},\n'
+    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+    clase_creada +=f'}};\n\n'
+    clase_creada +=f'final class Get{class_name}ByCriteria\n{{\n\n'
+    clase_creada +=f'   public function __invoke(I{class_name}ReadRepository $repository, $criteria) : ?array\n   {{\n'
+    clase_creada +=f'       return $this->repository->getByCriteria($criteria);\n'
+    clase_creada +=f'   }}\n\n'
+    clase_creada +=f'}}\n\n'
 
-        output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
-        if not os.path.exists(output_folder_path):
-            os.makedirs(output_folder_path)
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Query'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
 
-        output_file_path = os.path.join(output_folder_path, f'Get{class_name}ByCriteria.php')
-        with open(output_file_path, 'w') as output_file:
-            output_file.write(clase_creada)
+    output_file_path = os.path.join(output_folder_path, f'Get{class_name}ByCriteria.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
+
+def convert_yii_model_to_Dto(file_path, folder_structure, core_folder):
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application\\DTO;\n\n'
+    clase_creada +=f'class {class_name}CreateDTO\n{{\n'
+    for indice, elemento in enumerate(variables_clase):
+        if esObjeto[indice] == 0 :
+            clase_creada += f"  public {variables_primitivas[indice]} ${nombre_variable[indice]};\n"
+        else:
+            clase_creada += f"  //insertar Dto de {nombre_variable[indice]} si corresponde\n" 
+    clase_creada +=f'\n'
+    clase_creada +=f'  public function __construct(\n'
+    for indice, elemento in enumerate(variables_clase):
+        if esObjeto[indice] == 0 :
+            clase_creada += f"      {variables_primitivas[indice]} ${nombre_variable[indice]},\n"
+    clase_creada +=f'   )\n   {{\n'
+    for indice, elemento in enumerate(variables_clase):
+        if esObjeto[indice] == 0 :
+            clase_creada += f"      $this->{nombre_variable[indice]} = ${nombre_variable[indice]};\n"
+
+    clase_creada +=f'   }}\n\n'
+    clase_creada +=f'}}\n\n'
+
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/DTO'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
+
+    output_file_path = os.path.join(output_folder_path, f'{class_name}CreateDTO.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
+
+def convert_yii_model_to_Command(file_path, folder_structure, core_folder):
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Dommain\\{{\n'
+    clase_creada +=f'   {class_name},\n'
+    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+    clase_creada +=f'}};\n\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Application\\DTO\\{class_name}CreateDTO;\n\n'
+    clase_creada +=f'final class Create{class_name}\n{{\n\n'
+    clase_creada +=f'   public function __invoke({class_name}CreateDTO ${class_name}DTO, I{class_name}ReadRepositor $repository)   {{\n'
+    clase_creada +=f"       //$arr = [];\n"
+    clase_creada +=f"       //$arr['id'] = Uuid::uuid4()->toString();\n"
+    clase_creada +=f"       //$arr['nickname'] = $avatarDTO->nickname;\n"
+    clase_creada +=f"       //$arr['message'] = $avatarDTO->message;\n"
+    clase_creada +=f"       //return $repository->create($arr);\n"
+    clase_creada +=f'   }}\n\n'
+    clase_creada +=f'}}\n\n'
+
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Command'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
+
+    output_file_path = os.path.join(output_folder_path, f'Create{class_name}.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
+
 
 convert_yii_model_to_Query(file_path, folder_structure,core_folder)
+convert_yii_model_to_Dto(file_path, folder_structure,core_folder)
+convert_yii_model_to_Command(file_path, folder_structure,core_folder)

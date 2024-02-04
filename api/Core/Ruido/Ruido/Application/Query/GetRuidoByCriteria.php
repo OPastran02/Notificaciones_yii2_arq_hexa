@@ -9,18 +9,12 @@ use api\Core\Ruido\Ruido\Dommain\{
    Repository\IRuidoReadRepository
 };
 
-class GetRuidoByCriteria
+final class GetRuidoByCriteria
 {
-   private IRuidoReadRepository $repository;
 
-   public function __construct(IRuidoReadRepository $repository)
+   public function __invoke(IRuidoReadRepository $repository, $criteria) : ?array
    {
-       $this->repository = $repository;
-   }
-
-   public function __invoke(): ?Ruido
-   {
-       return $this->repository->getByCriteria($RuidoId);
+       return $this->repository->getByCriteria($criteria);
    }
 
 }
