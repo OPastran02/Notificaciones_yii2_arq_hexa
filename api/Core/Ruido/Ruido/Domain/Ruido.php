@@ -19,8 +19,6 @@ use api\Core\Ruido\Ruido\Domain\ValueObject\{
     Correccion,
 };
 
-use Yii;
-
 class Ruido extends AggregateRoot
 {
 

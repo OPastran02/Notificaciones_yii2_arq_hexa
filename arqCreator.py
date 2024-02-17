@@ -339,17 +339,13 @@ def convert_yii_model_to_Command(file_path, folder_structure, core_folder):
     clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
     clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\{{\n'
     clase_creada +=f'   {class_name},\n'
-    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+    clase_creada +=f'   Repository\\I{class_name}WriteRepository\n'
     clase_creada +=f'}};\n\n'
     clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Application\\DTO\\{class_name}CreateDTO;\n'
     clase_creada +=f'use Ramsey\\Uuid\\Uuid;\n\n'
     clase_creada +=f'final class Create{class_name}\n{{\n\n'
-    clase_creada +=f'   public function __invoke({class_name}CreateDTO ${class_name}DTO, I{class_name}ReadRepositor $repository)   {{\n'
-    clase_creada +=f"       //$arr = [];\n"
-    clase_creada +=f"       //$arr['id'] = Uuid::uuid4()->toString();\n"
-    clase_creada +=f"       //$arr['nickname'] = $avatarDTO->nickname;\n"
-    clase_creada +=f"       //$arr['message'] = $avatarDTO->message;\n"
-    clase_creada +=f"       //return $repository->create($arr);\n"
+    clase_creada +=f'   public function __invoke({class_name}CreateDTO ${class_name}DTO, I{class_name}WriteRepository $repository)   \n   {{\n'
+    clase_creada +=f"       return $repository->create(${class_name}DTO);\n"
     clase_creada +=f'   }}\n\n'
     clase_creada +=f'}}\n\n'
 
@@ -365,12 +361,12 @@ def convert_yii_model_to_Command(file_path, folder_structure, core_folder):
     clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
     clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\{{\n'
     clase_creada +=f'   {class_name},\n'
-    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+    clase_creada +=f'   Repository\\I{class_name}WriteRepository\n'
     clase_creada +=f'}};\n\n'
     clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Application\\DTO\\{class_name}CreateDTO;\n'
     clase_creada +=f'use Ramsey\\Uuid\\Uuid;\n\n'
     clase_creada +=f'final class Update{class_name}\n{{\n\n'
-    clase_creada +=f'   public function __invoke({class_name}CreateDTO ${class_name}DTO, I{class_name}ReadRepositor $repository)   {{\n'
+    clase_creada +=f'   public function __invoke({class_name}CreateDTO ${class_name}DTO, I{class_name}WriteRepository $repository)   {{\n'
     clase_creada +=f"       //$arr = [];\n"
     clase_creada +=f"       //$arr['id'] = Uuid::uuid4()->toString();\n"
     clase_creada +=f"       //$arr['nickname'] = $avatarDTO->nickname;\n"
@@ -387,43 +383,17 @@ def convert_yii_model_to_Command(file_path, folder_structure, core_folder):
     with open(output_file_path, 'w') as output_file:
         output_file.write(clase_creada)
 
-    
-    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
-    clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
-    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\{{\n'
-    clase_creada +=f'   {class_name},\n'
-    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
-    clase_creada +=f'}};\n\n'
-    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Application\\DTO\\{class_name}CreateDTO;\n'
-    clase_creada +=f'use Ramsey\\Uuid\\Uuid;\n\n'
-    clase_creada +=f'final class Update{class_name}\n{{\n\n'
-    clase_creada +=f'   public function __invoke({class_name}CreateDTO ${class_name}DTO, I{class_name}ReadRepositor $repository)   {{\n'
-    clase_creada +=f"       //$arr = [];\n"
-    clase_creada +=f"       //$arr['id'] = Uuid::uuid4()->toString();\n"
-    clase_creada +=f"       //$arr['nickname'] = $avatarDTO->nickname;\n"
-    clase_creada +=f"       //$arr['message'] = $avatarDTO->message;\n"
-    clase_creada +=f"       //return $repository->create($arr);\n"
-    clase_creada +=f'   }}\n\n'
-    clase_creada +=f'}}\n\n'
-
-    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Application/Command'
-    if not os.path.exists(output_folder_path):
-        os.makedirs(output_folder_path)
-
-    output_file_path = os.path.join(output_folder_path, f'Update{class_name}.php')
-    with open(output_file_path, 'w') as output_file:
-        output_file.write(clase_creada)
 
     clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
     clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Application;\n\n'
     clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\{{\n'
     clase_creada +=f'   {class_name},\n'
-    clase_creada +=f'   Repository\\I{class_name}ReadRepository\n'
+    clase_creada +=f'   Repository\\I{class_name}WriteRepository\n'
     clase_creada +=f'}};\n\n'
     clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Application\\DTO\\{class_name}CreateDTO;\n'
     clase_creada +=f'use Ramsey\\Uuid\\Uuid;\n\n'
     clase_creada +=f'final class Delete{class_name}\n{{\n\n'
-    clase_creada +=f'   public function __invoke($id, I{class_name}ReadRepositor $repository)   {{\n'
+    clase_creada +=f'   public function __invoke($id, I{class_name}WriteRepository $repository)   {{\n'
     clase_creada +=f"       //$arr = [];\n"
     clase_creada +=f"       //$arr['id'] = Uuid::uuid4()->toString();\n"
     clase_creada +=f"       //$arr['nickname'] = $avatarDTO->nickname;\n"
@@ -441,24 +411,63 @@ def convert_yii_model_to_Command(file_path, folder_structure, core_folder):
         output_file.write(clase_creada)
 
 
+convert_yii_model_to_Query(file_path, folder_structure,core_folder)
+convert_yii_model_to_Dto(file_path, folder_structure,core_folder)
+convert_yii_model_to_Command(file_path, folder_structure,core_folder)
+
 ###################################################################################################
 ###################     INFRASTRUCTURE  ###############################################################
 ###################################################################################################
 
 #### QUERY
-def convert_yii_model_to_Query(file_path, folder_structure, core_folder):
+def convert_yii_model_to_persistence(file_path, folder_structure, core_folder):
+    clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
+    clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Infrastructure\\Persistence\\ActiveRecord;\n\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\{{\n'
+    clase_creada +=f'   {class_name},\n'
+    clase_creada +=f'   Repository\\I{class_name}WriteRepository\n'
+    clase_creada +=f'}};\n\n'
+    clase_creada +=f'use common\\models\\{class_name} as Model;\n\n'
+    clase_creada +=f'class {class_name}RepositoryActiveRecord implements I{class_name}WriteRepository\n{{\n\n'
+    clase_creada +=f'   public function create($arr) : {class_name}\n   {{\n'
+    clase_creada +=f'       $model = new Model();\n'
+    clase_creada +=f'       $model->attributes = $arr;\n'
+    clase_creada +=f'       if ($model->save()) return {class_name}::fromPrimitives(...$model->attributes);\n'
+    clase_creada +=f'   }}\n\n'
+    clase_creada +=f'}}\n\n'
+
+    output_folder_path = f'./api/Core/{core_folder}/{class_name}/Infrastructure/Persistence/ActiveRecord'
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
+
+    output_file_path = os.path.join(output_folder_path, f'{class_name}RepositoryActiveRecord.php')
+    with open(output_file_path, 'w') as output_file:
+        output_file.write(clase_creada)
+
+def convert_yii_model_to_Controllers(file_path, folder_structure, core_folder):
     clase_creada =f'<?php\n\ndeclare(strict_types=1);\n\n'
     clase_creada +=f'namespace api\\Core\\{core_folder}\\{class_name}\\Infrastructure\\Controller\\Api\\Write;\n\n'
-    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\Repository\\I{class_name}WriteRepository\n'
-    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Application\\Command\\Create{class_name}\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Domain\\Repository\\I{class_name}WriteRepository;\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Application\\Command\\Create{class_name};\n\n'
+    clase_creada +=f'use api\\Core\\{core_folder}\\{class_name}\\Infrastructure\\Persistence\\ActiveRecord\\{class_name}RepositoryActiveRecord;\n\n'
+    clase_creada +=f'use yii\\web\\Controller;\n'
+    clase_creada +=f'use yii\\web\\NotFoundHttpException;\n'
+    clase_creada +=f'use yii\\filters\\VerbFilter;\n'
+    clase_creada +=f'use Ramsey\\Uuid\\Uuid;\n'
+    clase_creada +=f'use yii\\helpers\\Json;\n'
+    clase_creada +=f'use yii\\web\\Response;\n'
+    clase_creada +=f'use Yii;\n'
     clase_creada +=f'class Create{class_name}Controller\n{{\n\n'
+    clase_creada +=f'   private Create{class_name} $handler;\n\n'    
     clase_creada +=f'   public function __construct(Create{class_name} $handler, I{class_name}WriteRepository $repository)\n   {{\n'
     clase_creada +=f'       $this->handler = $handler;\n'
     clase_creada +=f'       $this->repository = $repository;\n'
     clase_creada +=f'   }}\n\n'
-    clase_creada +=f'   public function __invoke({class_name}CreateDTO ${class_name}DTO)\n   {{\n'
-    clase_creada +=f'       $obj = ($this->handler)(${class_name}DTO, $this->repository);\n'
-    clase_creada +=f'       //resto del codigo'
+    clase_creada +=f'   public function __invoke()\n   {{\n'
+    clase_creada +=f'       $obj = ($this->handler)();\n'
+    clase_creada +=f'       Yii::$app->response->format = Response::FORMAT_JSON;\n'
+    clase_creada +=f'       Yii::$app->response->data = $obj->toPrimitives();\n'
+    clase_creada +=f'       return Yii::$app->response;\n'
     clase_creada +=f'   }}\n\n'
     clase_creada +=f'}}\n\n'
 
@@ -470,7 +479,5 @@ def convert_yii_model_to_Query(file_path, folder_structure, core_folder):
     with open(output_file_path, 'w') as output_file:
         output_file.write(clase_creada)
 
-
-convert_yii_model_to_Query(file_path, folder_structure,core_folder)
-convert_yii_model_to_Dto(file_path, folder_structure,core_folder)
-convert_yii_model_to_Command(file_path, folder_structure,core_folder)
+convert_yii_model_to_Controllers(file_path, folder_structure,core_folder)
+convert_yii_model_to_persistence(file_path, folder_structure,core_folder)
