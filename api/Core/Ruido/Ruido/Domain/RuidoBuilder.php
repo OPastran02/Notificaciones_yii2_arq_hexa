@@ -27,7 +27,7 @@ final class RuidoBuilder extends AggregatorBuilder
     private ?DateTimeValueObject $createdDate;
     private ?IntValueObject $modifyById;
     private ?DateTimeValueObject $modifyDate;
-    private DateTimeValueObject $isActive;
+    private BooleanValueObject $isActive;
 
     public function build(): Ruido
     {
@@ -100,4 +100,73 @@ final class RuidoBuilder extends AggregatorBuilder
         return $this;
     }
 
+    public function id() : IdValueObject
+    {
+        return $this->id;
+    }
+
+    public function asae() : IdValueObject
+    {
+        return $this->asae;
+    }
+
+    public function ambiente() : IdValueObject
+    {
+        return $this->ambiente;
+    }
+
+    public function periodo() : IdValueObject
+    {
+        return $this->periodo;
+    }
+
+    public function asa() : IdValueObject
+    {
+        return $this->asa;
+    }
+
+    public function recinto() : IdValueObject
+    {
+        return $this->recinto;
+    }
+
+    public function usoPredominante() : IdValueObject
+    {
+        return $this->usoPredominante;
+    }
+
+    public function lmp() : IdValueObject
+    {
+        return $this->lmp;
+    }
+
+    public function correccion() : IdValueObject
+    {
+        return $this->correccion;
+    }
+
+    public function createdById() : UserSeqNo
+    {
+        return $this->createdById;
+    }
+
+    public function createdDate() : ?DateTimeValueObject
+    {
+        return $this->createdDate;
+    }
+
+    public function modifyById() : ?UserSeqNo
+    {
+        return $this->modifyById;
+    }
+
+    public function modifyDate() : ?DateTimeValueObject
+    {
+        return $this->modifyDate;
+    }
+
+    public function isActive() : BooleanValueObject
+    {
+        return $this->isActive;
+    }
 }
