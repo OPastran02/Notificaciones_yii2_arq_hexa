@@ -11,10 +11,10 @@ use DateTime;
 abstract class DomainEvent
 {
     private readonly ?string $eventId;
+
     private readonly ?string $occurredOn;
     
     public function __construct(
-        private readonly int $aggregateId,
         string $eventId = null,
         string $occurredOn = null
     ) {
@@ -24,7 +24,6 @@ abstract class DomainEvent
 
     //convierte los objetos en primitivos
     abstract public static function fromPrimitives(
-        int $aggregateId,
         array $body,
         string $eventId,
         string $occurredOn

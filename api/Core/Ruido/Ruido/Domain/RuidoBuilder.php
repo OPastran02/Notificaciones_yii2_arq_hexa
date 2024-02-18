@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace api\Core\Ruido\Ruido\Domain;
 
+use Core\Shared\Domain\Aggregate\AggregatorBuilder;
 use Core\Shared\Domain\ValueObject\BooleanValueObject;
 use Core\Shared\Domain\ValueObject\DateTimeValueObject;
 use Core\Shared\Domain\ValueObject\EmptyIdValueObject;
@@ -10,6 +11,8 @@ use Core\Shared\Domain\ValueObject\FloatValueObject;
 use Core\Shared\Domain\ValueObject\IdValueObject;
 use Core\Shared\Domain\ValueObject\IntValueObject;
 use Core\Shared\Domain\ValueObject\StringValueObject;
+use Core\SharedKernelEntity\User\Domain\UserId;
+
 
 final class RuidoBuilder extends AggregatorBuilder
 {
@@ -23,9 +26,9 @@ final class RuidoBuilder extends AggregatorBuilder
     private IdValueObject $usoPredominante;
     private IntValueObject $lmp;
     private IntValueObject $correccion;
-    private IdValueObject $createdById;
+    private UserId $createdById;
     private ?DateTimeValueObject $createdDate;
-    private ?IntValueObject $modifyById;
+    private ?UserId $modifyById;
     private ?DateTimeValueObject $modifyDate;
     private BooleanValueObject $isActive;
 
@@ -47,20 +50,20 @@ final class RuidoBuilder extends AggregatorBuilder
         $this->usoPredominante                      = IdValueObject::fromPrimitives($primitives["usoPredominante"]);
         $this->lmp                                  = IdValueObject::fromPrimitives($primitives["asalmpe"]);
         $this->correccion                           = IdValueObject::fromPrimitives($primitives["correccion"]);
-        $this->createdById                          = UserSeqNo::fromPrimitives($primitives["createdById"]);
+        $this->createdById                          = UserId::fromPrimitives($primitives["createdById"]);
 		$this->createdDate                          = $primitives["createdDate"] ? DateTimeValueObject::fromString($primitives["createdDate"], 'Y-m-d H:i:s') : null;
-		$this->modifyById                           = $primitives["modifyById"] ? UserSeqNo::fromPrimitives($primitives["modifyById"]) : null;
+		$this->modifyById                           = $primitives["modifyById"] ? UserId::fromPrimitives($primitives["modifyById"]) : null;
 		$this->modifyDate                           = $primitives["modifyDate"] ? DateTimeValueObject::fromString($primitives["modifyDate"],'Y-m-d H:i:s') : null;
 		$this->isActive                             = BooleanValueObject::fromPrimitives($primitives["isActive"]);
 
         return $this;
     }
 
-    public function create(array $primitives, $userSeqNo): self
+    public function create(array $primitives, $userId): self
     {
         $this->setPrimitives($primitives);
 
-        $this->id                                   = $this->good('seqNo', $primitives) ? new IdValueObject($primitives['seqNo']) : new EmptyIdValueObject();
+        $this->id                                   = $this->good('id', $primitives) ? new IdValueObject($primitives['id']) : new EmptyIdValueObject();
         $this->asae                                 = new IdValueObject($primitives['asae']);
         $this->ambiente                             = new IdValueObject($primitives['ambiente']);
         $this->periodo                              = new IdValueObject($primitives['periodo']);
@@ -69,16 +72,16 @@ final class RuidoBuilder extends AggregatorBuilder
         $this->usoPredominante                      = new IdValueObject($primitives['usoPredominante']);
         $this->lmp                                  = new IdValueObject($primitives['lmp']);
         $this->correccion                           = new IdValueObject($primitives['usoPredocorreccionminante']);
-        $this->createdById                          = new UserSeqNo($userSeqNo);
+        $this->createdById                          = new UserId($userId);
         $this->createdDate                          = DateTimeValueObject::now();
-        $this->modifyById                           = $this->primitiveOrNull('modifyById') ? new UserSeqNo($primitives['modifyById']) : null;
+        $this->modifyById                           = $this->primitiveOrNull('modifyById') ? new UserId($primitives['modifyById']) : null;
 		$this->modifyDate                           = $primitives["modifyDate"] ? DateTimeValueObject::fromString($primitives["modifyDate"],'Y-m-d H:i:s') : null;
 		$this->isActive                             = new BooleanValueObject((bool) $this->primitiveOrNull('isCompleted'));
 
         return $this;
     }
 
-    public function update(array $data, Ruido $ruido, $userSeqNo): self
+    public function update(array $data, Ruido $ruido, $userId): self
     {
         $primitives = $ruido->toPrimitives();
         $this->fromPrimitives($primitives);
@@ -93,7 +96,7 @@ final class RuidoBuilder extends AggregatorBuilder
         $this->usoPredominante                      = new IdValueObject($primitives['usoPredominante']);
         $this->lmp                                  = new IdValueObject($primitives['lmp']);
         $this->correccion                           = new IdValueObject($primitives['usoPredocorreccionminante']);
-        $this->modifyById                           = new UserSeqNo($userSeqNo);
+        $this->modifyById                           = new UserId($userId);
 		$this->modifyDate                           = DateTimeValueObject::now();
 		$this->isActive                             = new BooleanValueObject((bool) $this->primitiveOrNull('isCompleted'));
 
@@ -145,7 +148,7 @@ final class RuidoBuilder extends AggregatorBuilder
         return $this->correccion;
     }
 
-    public function createdById() : UserSeqNo
+    public function createdById() : UserId
     {
         return $this->createdById;
     }
@@ -155,7 +158,7 @@ final class RuidoBuilder extends AggregatorBuilder
         return $this->createdDate;
     }
 
-    public function modifyById() : ?UserSeqNo
+    public function modifyById() : ?UserId
     {
         return $this->modifyById;
     }
