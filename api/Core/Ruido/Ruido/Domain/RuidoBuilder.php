@@ -34,7 +34,7 @@ final class RuidoBuilder extends AggregatorBuilder
         return new Ruido($this);
     }
 
-    public function fromPrimitives(array $primitives): AdjustmentBuilder
+    public function fromPrimitives(array $primitives): self
     {
         $this->setPrimitives($primitives);
 
@@ -56,7 +56,7 @@ final class RuidoBuilder extends AggregatorBuilder
         return $this;
     }
 
-    public function create(array $primitives, $userSeqNo): AdjustmentBuilder
+    public function create(array $primitives, $userSeqNo): self
     {
         $this->setPrimitives($primitives);
 
@@ -78,11 +78,13 @@ final class RuidoBuilder extends AggregatorBuilder
         return $this;
     }
 
-    public function update(array $primitives, $userSeqNo): AdjustmentBuilder
+    public function update(array $data, Ruido $ruido, $userSeqNo): self
     {
-        $this->setPrimitives($primitives);
+        $primitives = $ruido->toPrimitives();
+        $this->fromPrimitives($primitives);
+        $this->setPrimitives($data);
+        $primitives = $data;
 
-        $this->id                                   = $this->good('seqNo', $primitives) ? new IdValueObject($primitives['seqNo']) : new EmptyIdValueObject();
         $this->asae                                 = new IdValueObject($primitives['asae']);
         $this->ambiente                             = new IdValueObject($primitives['ambiente']);
         $this->periodo                              = new IdValueObject($primitives['periodo']);
@@ -91,10 +93,8 @@ final class RuidoBuilder extends AggregatorBuilder
         $this->usoPredominante                      = new IdValueObject($primitives['usoPredominante']);
         $this->lmp                                  = new IdValueObject($primitives['lmp']);
         $this->correccion                           = new IdValueObject($primitives['usoPredocorreccionminante']);
-        $this->createdById                          = new UserSeqNo($userSeqNo);
-        $this->createdDate                          = DateTimeValueObject::now();
-        $this->modifyById                           = $this->primitiveOrNull('lastModBySeqNo') ? new UserSeqNo($primitives['lastModBySeqNo']) : null;
-		$this->modifyDate                           = $primitives["modifyDate"] ? DateTimeValueObject::fromString($primitives["modifyDate"],'Y-m-d H:i:s') : null;
+        $this->modifyById                           = new UserSeqNo($userSeqNo);
+		$this->modifyDate                           = DateTimeValueObject::now();
 		$this->isActive                             = new BooleanValueObject((bool) $this->primitiveOrNull('isCompleted'));
 
         return $this;
