@@ -3,36 +3,33 @@ declare(strict_types=1);
 
 namespace api\Core\Ruido\Ruido\Domain;
 
-use api\Shared\Domain\ValueObject\{
-    UUID,
-    NID,
-};
+use Core\Shared\Domain\ValueObject\BooleanValueObject;
+use Core\Shared\Domain\ValueObject\DateTimeValueObject;
+use Core\Shared\Domain\ValueObject\EmptyIdValueObject;
+use Core\Shared\Domain\ValueObject\FloatValueObject;
+use Core\Shared\Domain\ValueObject\IdValueObject;
+use Core\Shared\Domain\ValueObject\IntValueObject;
+use Core\Shared\Domain\ValueObject\StringValueObject;
 
-use api\Core\Ruido\Ruido\Domain\ValueObject\{
-    Asae,
-    Ambiente,
-    Periodo,
-    Asa,
-    Recinto,
-    Usopredominante,
-    Lmp,
-    Correccion,
-};
-
-class Ruido extends AggregateRoot
+final class Ruido extends AggregateRoot
 {
 
-    public function __construct(
-        private UUID $idRuidos,
-        private Asae $ASAE,
-        private Ambiente $Ambiente,
-        private Periodo $Periodo,
-        private Asa $ASA,
-        private Recinto $Recinto,
-        private Usopredominante $Uso_predominante,
-        private Lmp $LMP,
-        private Correccion $Correccion,
-    )
+    private IdValueObject $id;
+    private IdValueObject $asae;
+    private IdValueObject $ambiente;
+    private IdValueObject $periodo;
+    private IdValueObject $asa;
+    private IdValueObject $recinto;
+    private IdValueObject $usoPredominante;
+    private IntValueObject $lmp;
+    private IntValueObject $correccion;
+    private IdValueObject $createdById;
+    private DateTimeValueObject $createdDate;
+    private IntValueObject $modifyById;
+    private DateTimeValueObject $modifyDate;
+    private DateTimeValueObject $isActive;
+
+    public function __construct(RuidoBuilder $builder)
     {}
 
     public static function create(

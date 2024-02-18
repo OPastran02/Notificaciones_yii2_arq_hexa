@@ -19,20 +19,25 @@
 -- Table structure for table `Ruidos`
 --
 
-DROP TABLE IF EXISTS `Ruidos`;
+DROP TABLE IF EXISTS `ruidos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Ruidos` (
-  `idRuidos` int(11) NOT NULL AUTO_INCREMENT,
-  `ASAE` int(11) DEFAULT NULL,
-  `Ambiente` int(11) DEFAULT NULL,
-  `Periodo` int(11) DEFAULT NULL,
-  `ASA` int(11) DEFAULT NULL,
-  `Recinto` int(11) DEFAULT NULL,
-  `Uso_predominante` int(11) DEFAULT NULL,
-  `LMP` int(11) DEFAULT NULL,
-  `Correccion` int(11) DEFAULT NULL,
-  PRIMARY KEY (`idRuidos`)
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `asae` int(11) DEFAULT NULL,
+  `ambiente` int(11) DEFAULT NULL,
+  `perido` int(11) DEFAULT NULL,
+  `asa` int(11) DEFAULT NULL,
+  `recinto` int(11) DEFAULT NULL,
+  `usoPredominante` int(11) DEFAULT NULL,
+  `limiteMaximoPermitido` int(11) DEFAULT NULL,
+  `correccion` int(11) DEFAULT NULL,
+  `createdById` int(11) DEFAULT NULL,
+  `createdDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,  
+  `modifyById` int(11) DEFAULT NULL,
+  `modifyDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `isActive` TINYINT(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

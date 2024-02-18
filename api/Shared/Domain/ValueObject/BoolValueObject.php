@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace api\Shared\Domain\ValueObject\Primitives;
+namespace api\Shared\Domain\ValueObject;
 
 abstract class BoolValueObject
 {
